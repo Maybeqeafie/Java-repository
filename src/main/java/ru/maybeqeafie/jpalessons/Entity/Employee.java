@@ -2,19 +2,17 @@ package ru.maybeqeafie.jpalessons.Entity;
 
 import lombok.*;
 
-
 import javax.persistence.*;
-import java.util.List;
 
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString(exclude = "employee")
+@ToString
 @Entity
-@Table(name = "Department")
-public class Department {
+@Table(name = "Employee")
+public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int id;
@@ -22,5 +20,8 @@ public class Department {
     @Column(name = "name")
     public String name;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="department_id")
+    Department department;
 
 }

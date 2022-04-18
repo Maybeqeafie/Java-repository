@@ -1,5 +1,6 @@
 package ru.maybeqeafie.jpalessons.Config;
 
+import org.hibernate.dialect.H2Dialect;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
@@ -25,7 +26,7 @@ public class DataSourceConfig {
         LocalContainerEntityManagerFactoryBean em
                 = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource());
-        em.setPackagesToScan(new String[] { "ru.maybeqeafie.jpalessons.Entity" });
+        em.setPackagesToScan("ru.maybeqeafie.jpalessons");
 
         JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
@@ -37,7 +38,7 @@ public class DataSourceConfig {
     @Bean
     public DataSource dataSource(){
         DriverManagerDataSource driverManager = new DriverManagerDataSource();
-        driverManager.setUrl("jdbc:h2:~/test");
+        driverManager.setUrl("jdbc:h2:file:~/test");
         driverManager.setUsername("sa");
         driverManager.setPassword("");
         return driverManager;
@@ -59,7 +60,7 @@ public class DataSourceConfig {
     Properties additionalProperties() {
         Properties properties = new Properties();
 //        properties.setProperty("hibernate.hbm2ddl.auto", "create-drop");
-//        properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
+        properties.setProperty("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
 
         return properties;
     }
