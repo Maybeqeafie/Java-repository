@@ -358,7 +358,7 @@ public class MainController {
 
         return "/index";
     }
-
+//dsfsndkfgskdfkjshdjfhkjdsf
     @RequestMapping(value = "/index")
     public String index(Model model) {
         List<Accounts> accountsList = new ArrayList<>(accountsService.getAll());
