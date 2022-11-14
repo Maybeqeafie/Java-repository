@@ -1,6 +1,5 @@
 package ru.maybeqeafie.jpalessons.Config;
 
-import org.hibernate.dialect.H2Dialect;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;

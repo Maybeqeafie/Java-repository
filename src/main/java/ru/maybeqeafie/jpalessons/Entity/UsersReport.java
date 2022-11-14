@@ -11,17 +11,13 @@ import javax.persistence.*;
 @Setter
 @ToString
 @Entity
-@Table(name = "Employee")
-public class Employee {
+@Table(name = "Usersreport")
+public class UsersReport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int id;
+    private int id;
 
-    @Column(name = "name")
-    public String name;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="department_id")
-    Department department;
+    @Column(name = "login")
+    public String login;
 
 }

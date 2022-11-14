@@ -1,0 +1,7 @@
+<persistence>
+    <persistence-unit name="test">
+        <description>Persistence Unit For test</description>
+        <class>ru.maybeqeafie.jpalessons.Entity.Users</class>
+        <class>ru.maybeqeafie.jpalessons.Entity.AdminCount</class>
+    </persistence-unit>
+</persistence>

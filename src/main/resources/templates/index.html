@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- Bootstrap CSS (jsDelivr CDN) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <!-- Bootstrap Bundle JS (jsDelivr CDN) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+            crossorigin="anonymous"></script>
+</head>
+<body>
+<div th:unless="${users.getIsBan() == true}">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">FunPay</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav" th:object="${users}">
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#" th:text="${users.login}"></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#" th:text="${users.balance} + ' руб.'"></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/getDonate">Пополнить</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/getSellAccount">Продать свой аккаунт</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/historySales">История продаж</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/historyBuy">История покупок</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/signOut">Выйти</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="list-group">
+        <li class="list-group-item active">Список аккаунтов</li>
+        <div class="dropdown dropend" th:each="account : ${accounts}">
+            <div th:unless="${account.getIsBuy() == true}">
+                <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink 1"
+                   data-bs-toggle="dropdown" aria-expanded="false" th:text="${account.name}">
+                </a>
+                <ul class="dropdown-menu">
+                    <div th:unless="${account.users.login == users.login}"
+                         th:object="${accountDelete.setId(account.id)}">
+                        <form th:method="POST" th:action="@{/buy}" th:object="${accountDelete}">
+                            <div class="form-group">
+                                <input type="text" th:field="*{id}" class="form-control d-none">
+                            </div>
+                            <button type="submit" class="dropdown-item">Купить</button>
+                        </form>
+                    </div>
+                    <div th:if="${account.users.login == users.login}" th:object="${accountDelete.setId(account.id)}">
+                        <form th:method="POST" th:action="@{/delete}" th:object="${accountDelete}">
+                            <div class="form-group">
+                                <input type="text" th:field="*{id}" class="form-control d-none">
+                            </div>
+                            <button type="submit" class="dropdown-item">Удалить объявление</button>
+                        </form>
+                    </div>
+                    <li class="list-group-item" th:text="${account.users.login}"></li>
+                    <li class="list-group-item" th:text="${account.text}"></li>
+                    <li class="list-group-item" th:text="${account.price * 1.05} + ' руб.'"></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+<!--    <div class="list-group">-->
+<!--        <li class="list-group-item active">Вы не ответили</li>-->
+<!--        <div class="dropdown dropend" th:each="accountNotAnswer : ${accountsListNotAnswer}">-->
+<!--            <div th:if="${accountNotAnswer.getIsBuy() == true}">-->
+<!--                <div th:if="${accountNotAnswer.getBuyer().getLogin() == user.getLogin()}">-->
+<!--                    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink 2"-->
+<!--                       data-bs-toggle="dropdown" aria-expanded="false" th:text="${accountNotAnswer.name}">-->
+<!--                    </a>-->
+<!--                    <ul class="dropdown-menu">-->
+<!--                        <div th:object="${operationOk.setUserOpinion(true)}">-->
+<!--                            <div th:object="${operationOk.setId(accountNotAnswer.getId())}">-->
+<!--                                <form th:method="POST" th:action="@{/ok}" th:object="${operationOk}">-->
+<!--                                    <div class="form-group">-->
+<!--                                        <input type="text" th:field="*{userOpinion}" class="form-control d-none">-->
+<!--                                    </div>-->
+<!--                                    <div class="form-group">-->
+<!--                                        <input type="text" th:field="*{id}" class="form-control d-none">-->
+<!--                                    </div>-->
+<!--                                    <button type="submit" class="btn btn-primary">Ok</button>-->
+<!--                                </form>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div th:object="${operationNotOk.setUserOpinion(false)}">-->
+<!--                            <div th:object="${operationNotOk.setId(accountNotAnswer.getId())}">-->
+<!--                                <form th:method="POST" th:action="@{/report}" th:object="${operationNotOk}">-->
+<!--                                    <div class="form-group">-->
+<!--                                        <input type="text" th:field="*{userOpinion}" class="form-control d-none">-->
+<!--                                    </div>-->
+<!--                                    <div class="form-group">-->
+<!--                                        <input type="text" th:field="*{id}" class="form-control d-none">-->
+<!--                                    </div>-->
+<!--                                    <button type="submit" class="btn btn-primary">Report</button>-->
+<!--                                </form>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <li class="list-group-item" th:text="${accountNotAnswer.getLogin()}"></li>-->
+<!--                        <li class="list-group-item" th:text="${accountNotAnswer.getPassword()}"></li>-->
+<!--                        <li class="list-group-item" th:text="${accountNotAnswer.users.login}"></li>-->
+<!--                        <li class="list-group-item" th:text="${accountNotAnswer.text}"></li>-->
+<!--                        <li class="list-group-item" th:text="${accountNotAnswer.price * 1.05} + ' руб.'"></li>-->
+<!--                    </ul>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+    <!--    <div class="list-group">-->
+    <!--        <li class="list-group-item active">Ваша история покупок</li>-->
+    <!--        <div class="dropdown dropend" th:each="operation : ${operations}">-->
+    <!--            <div th:if="${operation.getBuyer().getId() == users.getId()}">-->
+    <!--                <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink 2"-->
+    <!--                   data-bs-toggle="dropdown" aria-expanded="false" th:text="${operation.name}">-->
+    <!--                </a>-->
+    <!--                <ul class="dropdown-menu">-->
+    <!--                    <li class="list-group-item" th:text="${'Продавец: ' + operation.user.login}"></li>-->
+    <!--                    <li class="list-group-item" th:text="${operation.text}"></li>-->
+    <!--                    <li class="list-group-item" th:text="${operation.price} + ' руб.'"></li>-->
+    <!--                    <li class="list-group-item" th:text="${'Логин: ' + operation.login}"></li>-->
+    <!--                    <li class="list-group-item" th:text="${'Пароль: ' + operation.password}"></li>-->
+    <!--                    <div th:if="${operation.userOpinion == false}">-->
+    <!--                        <li class="list-group-item" th:text="'Вы жаловались'"></li>-->
+    <!--                    </div>-->
+    <!--                    <div th:if="${operation.userOpinion == true}">-->
+    <!--                        <li class="list-group-item" th:text="'Вы довольны'"></li>-->
+    <!--                    </div>-->
+    <!--                    <div th:if="${operation.adminOpinion == true}">-->
+    <!--                        <li class="list-group-item" th:text="'Админ вернул вам деньги'"></li>-->
+    <!--                    </div>-->
+    <!--                    <div th:if="${operation.adminOpinion == false}">-->
+    <!--                        <li class="list-group-item" th:text="'Админ отклонил вашу жалобу'"></li>-->
+    <!--                    </div>-->
+    <!--                    <div th:if="${operation.adminOpinion == null}">-->
+    <!--                        <div th:if="${operation.userOpinion == false}">-->
+    <!--                            <li class="list-group-item" th:text="'Админ скоро рассмотрит вашу жалобу'"></li>-->
+    <!--                        </div>-->
+    <!--                    </div>-->
+    <!--                    <div th:unless="${operation.adminOpinion == true}"-->
+    <!--                         th:object="${accountReport.setId(operation.getId())}">-->
+    <!--                        <div th:if="${operation.getIsReported == null}">-->
+    <!--                            <form th:method="POST" th:action="@{/reportHacked}" th:object="${accountReport}">-->
+    <!--                                <div class="form-group">-->
+    <!--                                    <input type="text" th:field="*{id}" class="form-control d-none">-->
+    <!--                                </div>-->
+    <!--                                <button type="submit" class="dropdown-item">Пожаловаться на продавца за-->
+    <!--                                    взломанный-->
+    <!--                                    аккаунт-->
+    <!--                                </button>-->
+    <!--                            </form>-->
+    <!--                        </div>-->
+    <!--                    </div>-->
+    <!--                    <div th:if="${operation.getIsReported == true}">-->
+    <!--                        <li class="list-group-item"-->
+    <!--                            th:text="'Вы пожаловались на продавца за взломанный аккаунт'"></li>-->
+    <!--                    </div>-->
+
+    <!--                </ul>-->
+    <!--            </div>-->
+    <!--        </div>-->
+    <!--    </div>-->
+
+    <!--    <div class="list-group">-->
+    <!--        <li class="list-group-item active">Ваша история продаж</li>-->
+    <!--        <div class="dropdown dropend" th:each="operation : ${operations}">-->
+    <!--            <div th:if="${operation.getUser().getId() == users.getId()}">-->
+    <!--                <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink 3"-->
+    <!--                   data-bs-toggle="dropdown" aria-expanded="false" th:text="${operation.name}">-->
+    <!--                </a>-->
+    <!--                <ul class="dropdown-menu">-->
+    <!--                    <li class="list-group-item" th:text="${'Покупатель: ' + operation.buyer.login}"></li>-->
+    <!--                    <li class="list-group-item" th:text="${operation.text}"></li>-->
+    <!--                    <li class="list-group-item" th:text="${operation.price} + ' руб.'"></li>-->
+    <!--                    <li class="list-group-item" th:text="${'Логин: ' + operation.login}"></li>-->
+    <!--                    <li class="list-group-item" th:text="${'Пароль: ' + operation.password}"></li>-->
+    <!--                    <div th:if="${operation.userOpinion == false}">-->
+    <!--                        <li class="list-group-item" th:text="'На аккаунт который вы продаете пожаловались'"></li>-->
+    <!--                    </div>-->
+    <!--                    <div th:if="${operation.userOpinion == true}">-->
+    <!--                        <li class="list-group-item" th:text="'Продажа произошла успешна'"></li>-->
+    <!--                    </div>-->
+    <!--                    <div th:if="${operation.adminOpinion == true}">-->
+    <!--                        <li class="list-group-item" th:text="'Админ вернул деньги покупателю'"></li>-->
+    <!--                    </div>-->
+    <!--                    <div th:if="${operation.adminOpinion == false}">-->
+    <!--                        <li class="list-group-item" th:text="'Админ отклонил жалобу покупателя'"></li>-->
+    <!--                    </div>-->
+    <!--                    <div th:if="${operation.adminOpinion == null}">-->
+    <!--                        <div th:if="${operation.userOpinion == false}">-->
+    <!--                            <li class="list-group-item" th:text="'Админ пока рассматривает жалобу покупателя'"></li>-->
+    <!--                        </div>-->
+    <!--                    </div>-->
+    <!--                </ul>-->
+    <!--            </div>-->
+    <!--        </div>-->
+    <!--    </div>-->
+</div>
+<div th:if="${users.getIsBan() == true}">
+    Вы забанены
+</div>
+</body>
+</html>

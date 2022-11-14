@@ -2,25 +2,22 @@ package ru.maybeqeafie.jpalessons.Entity;
 
 import lombok.*;
 
-
 import javax.persistence.*;
-import java.util.List;
 
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString(exclude = "employee")
+@ToString
 @Entity
-@Table(name = "Department")
-public class Department {
+@Table(name = "AdminCount")
+public class AdminCount {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int id;
+    private int id;
 
-    @Column(name = "name")
-    public String name;
-
+    @Column(name = "Count")
+    public int count;
 
 }
